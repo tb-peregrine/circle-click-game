@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click the Circle - Retro Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1>CLICK THE CIRCLE</h1>
+            <div class="stats">
+                <div class="timer">TIME: <span id="time">0.00</span>s</div>
+                <div class="clicks">CLICKS: <span id="clicks">0</span>/10</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="game-area" id="gameArea">
+                <div class="circle" id="circle"></div>
+                <div class="start-screen" id="startScreen">
+                    <h2>READY?</h2>
+                    <button class="start-btn" id="startBtn">START GAME</button>
+                </div>
+                <div class="end-screen" id="endScreen" style="display: none;">
+                    <h2>GAME COMPLETE!</h2>
+                    <p>Your time: <span id="finalTime">0.00</span>s</p>
+                    <button class="restart-btn" id="restartBtn">PLAY AGAIN</button>
+                </div>
+            </div>
+            
+            <div class="analytics-panel">
+                <h3>PLAYER STATS</h3>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">BEST TIME</div>
+                        <div class="stat-value" id="bestScore">--</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">AVG TIME</div>
+                        <div class="stat-value" id="avgScore">--</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">GAMES</div>
+                        <div class="stat-value" id="totalGames">0</div>
+                    </div>
+                </div>
+                
+                <div class="chart-section">
+                    <h4>PERFORMANCE TREND</h4>
+                    <div class="chart-container" id="trendChart">
+                        <div class="no-data">NO DATA YET</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

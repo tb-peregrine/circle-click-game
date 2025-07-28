@@ -1,0 +1,11 @@
+DESCRIPTION >
+    Returns the count of games played by a specific user_id
+
+NODE total_games_query
+SQL >
+    %
+    SELECT count() as total_games
+    FROM click_game_events
+    WHERE user_id = {{String(user_id)}}
+
+TYPE endpoint

@@ -1,0 +1,15 @@
+DESCRIPTION >
+    Returns game_duration over time for a specific user_id for charting purposes
+
+NODE score_trend_query
+SQL >
+    %
+    SELECT 
+        timestamp,
+        game_duration,
+        game_id
+    FROM click_game_events
+    WHERE user_id = {{String(user_id)}}
+    ORDER BY timestamp ASC
+
+TYPE endpoint
