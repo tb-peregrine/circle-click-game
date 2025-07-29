@@ -119,8 +119,8 @@ class ClickGame {
     
     moveCircle() {
         const gameAreaRect = this.gameArea.getBoundingClientRect();
-        const circleSize = 60;
-        const margin = 20;
+        const circleSize = gameAreaRect.width * 0.075; // 7.5% of game area width
+        const margin = gameAreaRect.width * 0.025; // 2.5% margin
         
         const maxX = gameAreaRect.width - circleSize - margin;
         const maxY = gameAreaRect.height - circleSize - margin;
@@ -203,12 +203,26 @@ class ClickGame {
             this.calculatingScreen.style.display = 'none';
             this.circle.style.display = 'none';
             
-            // Show leaderboard screen without player score section
-            document.getElementById('yourScore').textContent = '--';
-            document.getElementById('yourRank').textContent = '#-';
+            // Fetch player's best score and leaderboard
+            const [bestScore, leaderboard] = await Promise.all([
+                this.fetchAnalytics('best_score'),
+                this.fetchLeaderboard()
+            ]);
             
-            // Fetch and display leaderboard
-            const leaderboard = await this.fetchLeaderboard();
+            // Show player's best score and rank
+            if (bestScore.length > 0 && bestScore[0].best_score) {
+                const playerBestTime = bestScore[0].best_score;
+                document.getElementById('yourScore').textContent = Math.round(playerBestTime) + 'ms';
+                
+                // Calculate rank based on best score
+                const playerRank = leaderboard.findIndex(entry => entry.username === this.username) + 1;
+                document.getElementById('yourRank').textContent = playerRank > 0 ? `#${playerRank}` : '#-';
+            } else {
+                document.getElementById('yourScore').textContent = '--';
+                document.getElementById('yourRank').textContent = '#-';
+            }
+            
+            // Update leaderboard display
             this.updateLeaderboardDisplay(leaderboard, null);
             
             this.leaderboardScreen.style.display = 'block';

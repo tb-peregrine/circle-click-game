@@ -52,6 +52,8 @@ h1 {
     border: 2px solid #00ff00;
     background: rgba(0, 255, 0, 0.1);
     text-shadow: 0 0 5px #00ff00;
+    width: 140px;
+    text-align: center;
 }
 
 .leaderboard-btn {
@@ -68,6 +70,8 @@ h1 {
     transition: all 0.3s ease;
     box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
     text-shadow: 0 0 5px #00ff00;
+    width: 160px;
+    text-align: center;
 }
 
 .leaderboard-btn:hover {
@@ -85,28 +89,37 @@ h1 {
     flex: 1;
     display: flex;
     gap: 4px;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: auto;
 }
 
 .game-area {
-    flex: 2;
+    flex: none;
     position: relative;
     background: radial-gradient(circle at center, #001a00, #000);
     overflow: hidden;
     border-right: 2px solid #00ff00;
+    width: max(800px, min(calc(100vh - 120px), calc(100vw - 400px)));
+    height: max(800px, min(calc(100vh - 120px), calc(100vw - 400px)));
+    min-width: 800px;
+    min-height: 800px;
 }
 
 .analytics-panel {
-    flex: 1;
+    flex: none;
+    width: 300px;
     background: linear-gradient(180deg, #001100, #000);
     padding: 20px;
     border-left: 2px solid #00ff00;
     overflow-y: auto;
+    min-height: 800px;
 }
 
 .circle {
     position: absolute;
-    width: 60px;
-    height: 60px;
+    width: 7.5%;
+    height: 7.5%;
     background: radial-gradient(circle, #00ff00, #00cc00);
     border-radius: 50%;
     cursor: pointer;
