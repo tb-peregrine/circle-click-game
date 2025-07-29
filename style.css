@@ -34,33 +34,33 @@ body {
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 900;
     text-shadow: 0 0 10px #00ff00;
-    letter-spacing: 3px;
+    letter-spacing: 2.4px;
 }
 
 .stats {
     display: flex;
-    gap: 30px;
-    font-size: 1.2rem;
+    gap: 24px;
+    font-size: 0.96rem;
     font-weight: 700;
 }
 
 .timer, .clicks {
-    padding: 10px 15px;
+    padding: 8px 12px;
     border: 2px solid #00ff00;
     background: rgba(0, 255, 0, 0.1);
     text-shadow: 0 0 5px #00ff00;
-    width: 140px;
+    width: 112px;
     text-align: center;
 }
 
 .leaderboard-btn {
     font-family: 'Orbitron', monospace;
-    font-size: 1.2rem;
+    font-size: 0.96rem;
     font-weight: 700;
-    padding: 10px 15px;
+    padding: 8px 12px;
     background: linear-gradient(45deg, #003300, #006600);
     color: #00ff00;
     border: 2px solid #00ff00;
@@ -70,7 +70,6 @@ h1 {
     transition: all 0.3s ease;
     box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
     text-shadow: 0 0 5px #00ff00;
-    width: 160px;
     text-align: center;
 }
 
@@ -91,7 +90,8 @@ h1 {
     gap: 4px;
     justify-content: center;
     align-items: flex-start;
-    overflow: auto;
+    overflow: hidden;
+    min-height: 0;
 }
 
 .game-area {
@@ -100,26 +100,26 @@ h1 {
     background: radial-gradient(circle at center, #001a00, #000);
     overflow: hidden;
     border-right: 2px solid #00ff00;
-    width: max(800px, min(calc(100vh - 120px), calc(100vw - 400px)));
-    height: max(800px, min(calc(100vh - 120px), calc(100vw - 400px)));
-    min-width: 800px;
-    min-height: 800px;
+    width: min(calc((100vh - 96px) * 1.5), calc(100vw - 280px));
+    height: min(calc(100vh - 96px), calc((100vw - 280px) / 1.5));
+    min-width: 640px;
+    min-height: 480px;
+    aspect-ratio: 3/2;
 }
 
 .analytics-panel {
-    flex: none;
-    width: 300px;
+    flex: 1;
+    min-width: 240px;
     background: linear-gradient(180deg, #001100, #000);
-    padding: 20px;
-    border-left: 2px solid #00ff00;
+    padding: 16px;
     overflow-y: auto;
-    min-height: 800px;
+    min-height: 480px;
 }
 
 .circle {
     position: absolute;
-    width: 7.5%;
-    height: 7.5%;
+    width: 8vmin;
+    height: 8vmin;
     background: radial-gradient(circle, #00ff00, #00cc00);
     border-radius: 50%;
     cursor: pointer;
@@ -127,7 +127,7 @@ h1 {
     box-shadow: 
         0 0 20px #00ff00,
         inset 0 0 10px rgba(255, 255, 255, 0.3);
-    transition: transform 0.1s ease;
+    transition: transform 0.1s ease, top 0.08s ease-out, left 0.08s ease-out;
     display: none;
 }
 
@@ -233,26 +233,26 @@ h1 {
 
 /* Analytics Panel Styles */
 .analytics-panel h3 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 900;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     text-shadow: 0 0 10px #00ff00;
     border-bottom: 2px solid #00ff00;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
 }
 
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 15px;
-    margin-bottom: 30px;
+    gap: 12px;
+    margin-bottom: 24px;
 }
 
 .stat-box {
     background: rgba(0, 255, 0, 0.05);
     border: 2px solid #00ff00;
-    padding: 15px;
+    padding: 12px;
     text-align: center;
     box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
 }
@@ -266,31 +266,31 @@ h1 {
 }
 
 .stat-value {
-    font-size: 1.8rem;
+    font-size: 1.44rem;
     font-weight: 900;
     color: #00ff00;
     text-shadow: 0 0 8px #00ff00;
 }
 
 .chart-section {
-    margin-top: 20px;
+    margin-top: 16px;
 }
 
 .chart-section h4 {
-    font-size: 1.2rem;
+    font-size: 0.96rem;
     font-weight: 700;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     color: #00cc00;
     text-shadow: 0 0 5px #00ff00;
 }
 
 .chart-container {
-    height: 200px;
+    height: 160px;
     background: rgba(0, 255, 0, 0.03);
     border: 2px solid #00ff00;
     border-radius: 5px;
-    padding: 10px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -459,7 +459,9 @@ h1 {
 .leaderboard-screen {
     min-width: 500px;
     max-height: 80vh;
-    overflow-y: auto;
+    overflow-y: visible;
+    display: flex;
+    flex-direction: column;
 }
 
 .player-score {
@@ -485,7 +487,8 @@ h1 {
 }
 
 .leaderboard-list {
-    max-height: 300px;
+    flex: 1;
+    max-height: 30vh;
     overflow-y: auto;
     margin-bottom: 20px;
     border: 2px solid #00ff00;
@@ -542,4 +545,257 @@ h1 {
     color: #00ff00;
     min-width: 80px;
     text-align: right;
+}
+
+/* Tinybird Button Styles */
+.tinybird-link {
+    display: block;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+.tinybird-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 12px 16px;
+    background: linear-gradient(45deg, #003300, #006600);
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+    text-shadow: 0 0 3px #00ff00;
+    width: 100%;
+    text-align: center;
+}
+
+.tinybird-btn:hover {
+    background: linear-gradient(45deg, #006600, #009900);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+    transform: translateY(-1px);
+}
+
+.tinybird-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
+}
+
+/* Responsive Design for Smaller Screens */
+@media screen and (max-width: 1440px) {
+    h1 {
+        font-size: 1.6rem;
+        letter-spacing: 1.6px;
+    }
+    
+    .stats {
+        font-size: 0.8rem;
+        gap: 16px;
+    }
+    
+    .timer, .clicks {
+        width: 96px;
+        padding: 6px 10px;
+    }
+    
+    .leaderboard-btn {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+    
+    .game-area {
+        min-width: 480px;
+        min-height: 320px;
+    }
+    
+    .analytics-panel {
+        min-width: 200px;
+        padding: 12px;
+    }
+    
+    .analytics-panel h3 {
+        font-size: 0.96rem;
+        margin-bottom: 12px;
+    }
+    
+    .stat-value {
+        font-size: 1.12rem;
+    }
+    
+    .chart-section h4 {
+        font-size: 0.8rem;
+    }
+    
+    .chart-container {
+        height: 120px;
+    }
+    
+    .tinybird-btn {
+        font-size: 0.64rem;
+        padding: 8px 10px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    h1 {
+        font-size: 1.44rem;
+        letter-spacing: 0.8px;
+    }
+    
+    .stats {
+        font-size: 0.72rem;
+        gap: 12px;
+    }
+    
+    .timer, .clicks {
+        width: 80px;
+        padding: 5px 8px;
+        font-size: 0.72rem;
+    }
+    
+    .leaderboard-btn {
+        font-size: 0.72rem;
+        padding: 5px 8px;
+    }
+    
+    .game-area {
+        min-width: 400px;
+        min-height: 280px;
+    }
+    
+    .analytics-panel {
+        min-width: 160px;
+        padding: 10px;
+    }
+    
+    .analytics-panel h3 {
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+    }
+    
+    .stat-label {
+        font-size: 0.64rem;
+    }
+    
+    .stat-value {
+        font-size: 0.96rem;
+    }
+    
+    .chart-section h4 {
+        font-size: 0.72rem;
+    }
+    
+    .chart-container {
+        height: 96px;
+    }
+    
+    .tinybird-btn {
+        font-size: 0.56rem;
+        padding: 6px 8px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .header {
+        padding: 12px;
+    }
+    
+    h1 {
+        font-size: 1.2rem;
+        letter-spacing: 0.8px;
+    }
+    
+    .stats {
+        font-size: 0.64rem;
+        gap: 8px;
+    }
+    
+    .timer, .clicks {
+        width: 72px;
+        padding: 4px 6px;
+        font-size: 0.64rem;
+    }
+    
+    .leaderboard-btn {
+        font-size: 0.64rem;
+        padding: 4px 6px;
+    }
+    
+    .game-area {
+        min-width: 320px;
+        min-height: 240px;
+    }
+    
+    .analytics-panel {
+        min-width: 144px;
+        padding: 8px;
+        min-height: 400px;
+    }
+    
+    .analytics-panel h3 {
+        font-size: 0.72rem;
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+    }
+    
+    .stat-box {
+        padding: 8px;
+    }
+    
+    .stat-label {
+        font-size: 0.56rem;
+        margin-bottom: 2px;
+    }
+    
+    .stat-value {
+        font-size: 0.8rem;
+    }
+    
+    .chart-section {
+        margin-top: 12px;
+    }
+    
+    .chart-section h4 {
+        font-size: 0.64rem;
+        margin-bottom: 8px;
+    }
+    
+    .chart-container {
+        height: 80px;
+        padding: 6px;
+    }
+    
+    .no-data {
+        font-size: 0.64rem;
+    }
+    
+    .chart-labels {
+        font-size: 0.48rem;
+        padding: 2px 6px;
+    }
+    
+    .tinybird-btn {
+        font-size: 0.48rem;
+        padding: 5px 6px;
+    }
+}
+
+/* Misclick animation */
+@keyframes misclickFlash {
+    0% {
+        background: radial-gradient(circle at center, #001a00, #000);
+    }
+    20% {
+        background: radial-gradient(circle at center, #1a0000, #300000);
+    }
+    100% {
+        background: radial-gradient(circle at center, #001a00, #000);
+    }
+}
+
+.game-area.misclick {
+    animation: misclickFlash 0.6s ease-out;
 }

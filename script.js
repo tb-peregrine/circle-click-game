@@ -22,6 +22,7 @@ class ClickGame {
         this.startTime = 0;
         this.gameTimer = null;
         this.isGameActive = false;
+        this.penaltyTime = 0;
         
         // Tinybird configuration
         this.tinybirdHost = 'https://api.us-east.tinybird.co';
@@ -33,18 +34,33 @@ class ClickGame {
     }
     
     init() {
-        this.startBtn.addEventListener('click', () => this.startGame());
-        this.restartBtn.addEventListener('click', () => this.resetGame());
-        this.newGameBtn.addEventListener('click', () => this.resetGame());
-        this.usernameSubmit.addEventListener('click', () => this.submitUsername());
+        this.startBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.startGame();
+        });
+        this.restartBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.resetGame();
+        });
+        this.newGameBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.resetGame();
+        });
+        this.usernameSubmit.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.submitUsername();
+        });
         this.usernameInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.submitUsername();
         });
-        this.circle.addEventListener('click', () => this.handleCircleClick());
+        this.circle.addEventListener('click', (e) => this.handleCircleClick(e));
         this.leaderboardBtn.addEventListener('click', () => this.showGlobalLeaderboard());
         
         // Prevent context menu on right click
         this.gameArea.addEventListener('contextmenu', (e) => e.preventDefault());
+        
+        // Add misclick detection
+        this.gameArea.addEventListener('click', (e) => this.handleGameAreaClick(e));
         
         // Check if username exists, if not show username prompt
         if (!this.username) {
@@ -87,8 +103,12 @@ class ClickGame {
         this.circle.style.display = 'block';
         this.isGameActive = true;
         this.clicks = 0;
+        this.penaltyTime = 0;
         this.startTime = Date.now();
         this.gameId = this.generateGameId();
+        
+        // Remove any existing misclick animation
+        this.gameArea.classList.remove('misclick');
         
         this.updateDisplay();
         this.moveCircle();
@@ -98,14 +118,28 @@ class ClickGame {
     startTimer() {
         this.gameTimer = setInterval(() => {
             if (this.isGameActive) {
-                const elapsed = Date.now() - this.startTime;
+                const elapsed = Date.now() - this.startTime + this.penaltyTime;
                 this.timeDisplay.textContent = Math.round(elapsed).toString() + 'ms';
             }
         }, 10);
     }
     
-    handleCircleClick() {
+    handleGameAreaClick(e) {
         if (!this.isGameActive) return;
+        
+        // Check if the click was on the circle
+        if (e.target === this.circle) {
+            this.handleCircleClick(e);
+        } else {
+            this.handleMisclick();
+        }
+    }
+    
+    handleCircleClick(e) {
+        if (!this.isGameActive) return;
+        
+        // Stop event propagation to prevent triggering game area click
+        e.stopPropagation();
         
         this.clicks++;
         this.updateDisplay();
@@ -115,6 +149,22 @@ class ClickGame {
         } else {
             this.moveCircle();
         }
+    }
+    
+    handleMisclick() {
+        if (!this.isGameActive) return;
+        
+        // Add 100ms penalty
+        this.penaltyTime += 100;
+        
+        // Flash red border
+        this.gameArea.classList.add('misclick');
+        setTimeout(() => {
+            this.gameArea.classList.remove('misclick');
+        }, 600);
+        
+        // Move circle to new position without counting the click
+        this.moveCircle();
     }
     
     moveCircle() {
@@ -128,6 +178,7 @@ class ClickGame {
         const x = Math.random() * maxX + margin;
         const y = Math.random() * maxY + margin;
         
+        // Animate to new position
         this.circle.style.left = x + 'px';
         this.circle.style.top = y + 'px';
     }
@@ -140,7 +191,7 @@ class ClickGame {
         this.isGameActive = false;
         clearInterval(this.gameTimer);
         
-        const finalTime = Date.now() - this.startTime;
+        const finalTime = Date.now() - this.startTime + this.penaltyTime;
         this.finalTimeDisplay.textContent = Math.round(finalTime).toString() + 'ms';
         
         // Hide circle and show calculating screen
@@ -209,17 +260,12 @@ class ClickGame {
                 this.fetchLeaderboard()
             ]);
             
-            // Show player's best score and rank
+            // Show player's best score
             if (bestScore.length > 0 && bestScore[0].best_score) {
                 const playerBestTime = bestScore[0].best_score;
                 document.getElementById('yourScore').textContent = Math.round(playerBestTime) + 'ms';
-                
-                // Calculate rank based on best score
-                const playerRank = leaderboard.findIndex(entry => entry.username === this.username) + 1;
-                document.getElementById('yourRank').textContent = playerRank > 0 ? `#${playerRank}` : '#-';
             } else {
                 document.getElementById('yourScore').textContent = '--';
-                document.getElementById('yourRank').textContent = '#-';
             }
             
             // Update leaderboard display
@@ -312,17 +358,11 @@ class ClickGame {
     
     updateLeaderboardDisplay(leaderboard, playerTime) {
         const leaderboardList = document.getElementById('leaderboardList');
-        const yourRank = document.getElementById('yourRank');
         
         if (leaderboard.length === 0) {
             leaderboardList.innerHTML = '<div class="no-data">No scores yet. Be the first!</div>';
-            yourRank.textContent = '#1';
             return;
         }
-        
-        // Find player's rank
-        const playerRank = leaderboard.findIndex(entry => entry.username === this.username) + 1;
-        yourRank.textContent = playerRank > 0 ? `#${playerRank}` : '#-';
         
         // Create leaderboard HTML
         const leaderboardHTML = leaderboard.slice(0, 10).map((entry, index) => {
