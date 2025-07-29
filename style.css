@@ -54,6 +54,33 @@ h1 {
     text-shadow: 0 0 5px #00ff00;
 }
 
+.leaderboard-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 10px 15px;
+    background: linear-gradient(45deg, #003300, #006600);
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    text-shadow: 0 0 5px #00ff00;
+}
+
+.leaderboard-btn:hover {
+    background: linear-gradient(45deg, #006600, #009900);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+    transform: translateY(-1px);
+}
+
+.leaderboard-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 0 3px rgba(0, 255, 0, 0.5);
+}
+
 .main-content {
     flex: 1;
     display: flex;

@@ -12,6 +12,7 @@ class ClickGame {
         this.newGameBtn = document.getElementById('newGameBtn');
         this.usernameSubmit = document.getElementById('usernameSubmit');
         this.usernameInput = document.getElementById('usernameInput');
+        this.leaderboardBtn = document.getElementById('leaderboardBtn');
         this.timeDisplay = document.getElementById('time');
         this.clicksDisplay = document.getElementById('clicks');
         this.finalTimeDisplay = document.getElementById('finalTime');
@@ -40,6 +41,7 @@ class ClickGame {
             if (e.key === 'Enter') this.submitUsername();
         });
         this.circle.addEventListener('click', () => this.handleCircleClick());
+        this.leaderboardBtn.addEventListener('click', () => this.showGlobalLeaderboard());
         
         // Prevent context menu on right click
         this.gameArea.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -148,8 +150,8 @@ class ClickGame {
         // Send game event to Tinybird
         await this.sendGameEvent(finalTime);
         
-        // Wait 2 seconds to allow events to propagate to Tinybird
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait 3 seconds to allow events to propagate to Tinybird
+        await new Promise(resolve => setTimeout(resolve, 3000));
         
         // Hide calculating screen and show leaderboard
         this.calculatingScreen.style.display = 'none';
@@ -190,6 +192,29 @@ class ClickGame {
             console.error('Error showing leaderboard:', error);
             // Fallback to old end screen if leaderboard fails
             this.endScreen.style.display = 'block';
+        }
+    }
+    
+    async showGlobalLeaderboard() {
+        try {
+            // Hide other screens
+            this.startScreen.style.display = 'none';
+            this.endScreen.style.display = 'none';
+            this.calculatingScreen.style.display = 'none';
+            this.circle.style.display = 'none';
+            
+            // Show leaderboard screen without player score section
+            document.getElementById('yourScore').textContent = '--';
+            document.getElementById('yourRank').textContent = '#-';
+            
+            // Fetch and display leaderboard
+            const leaderboard = await this.fetchLeaderboard();
+            this.updateLeaderboardDisplay(leaderboard, null);
+            
+            this.leaderboardScreen.style.display = 'block';
+        } catch (error) {
+            console.error('Error showing global leaderboard:', error);
+            alert('Failed to load leaderboard. Please try again.');
         }
     }
     
