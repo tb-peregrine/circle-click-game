@@ -23,6 +23,31 @@
                     <h2>READY?</h2>
                     <button class="start-btn" id="startBtn">START GAME</button>
                 </div>
+                <div class="username-prompt" id="usernamePrompt" style="display: none;">
+                    <h2>ENTER USERNAME</h2>
+                    <p>Choose a username for the global leaderboard:</p>
+                    <input type="text" id="usernameInput" placeholder="Your username" maxlength="20">
+                    <button class="start-btn" id="usernameSubmit">START PLAYING</button>
+                </div>
+                <div class="calculating-screen" id="calculatingScreen" style="display: none;">
+                    <h2>CALCULATING SCORES...</h2>
+                    <div class="loading-dots">
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                    </div>
+                </div>
+                <div class="leaderboard-screen" id="leaderboardScreen" style="display: none;">
+                    <h2>GLOBAL LEADERBOARD</h2>
+                    <div class="player-score">
+                        <h3>Your Score: <span id="yourScore">0.00</span>s</h3>
+                        <p>Rank: <span id="yourRank">#-</span></p>
+                    </div>
+                    <div class="leaderboard-list" id="leaderboardList">
+                        <div class="loading">Loading leaderboard...</div>
+                    </div>
+                    <button class="restart-btn" id="newGameBtn">START NEW GAME</button>
+                </div>
                 <div class="end-screen" id="endScreen" style="display: none;">
                     <h2>GAME COMPLETE!</h2>
                     <p>Your time: <span id="finalTime">0.00</span>s</p>

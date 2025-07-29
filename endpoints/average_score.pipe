@@ -1,3 +1,5 @@
+TOKEN app_token READ
+
 DESCRIPTION >
     Returns the average game_duration for a specific user_id
 
@@ -6,6 +8,6 @@ SQL >
     %
     SELECT avg(game_duration) as average_score
     FROM click_game_events
-    WHERE user_id = {{String(user_id)}}
+    WHERE user_id = {{String(username)}}
 
 TYPE endpoint

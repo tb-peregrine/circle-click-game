@@ -1,0 +1,17 @@
+TOKEN app_token READ
+
+DESCRIPTION >
+    Returns the global leaderboard with the top 100 players ranked by their fastest completion times
+
+NODE global_leaderboard_query
+SQL >
+    %
+    SELECT 
+        user_id as username,
+        MIN(game_duration) as best_time
+    FROM click_game_events
+    GROUP BY user_id
+    ORDER BY best_time ASC
+    LIMIT 100
+
+TYPE endpoint

@@ -1,12 +1,17 @@
+TOKEN app_token APPEND
+
 DESCRIPTION >
     Landing datasource to store click game events with user activity tracking
 
 SCHEMA >
     `user_id` String `json:$.user_id`,
-    `game_duration` Float32 `json:$.game_duration`,
+    `game_duration` UInt32 `json:$.game_duration`,
     `clicks` UInt32 `json:$.clicks`,
     `timestamp` DateTime `json:$.timestamp`,
     `game_id` String `json:$.game_id`
 
 ENGINE "MergeTree"
 ENGINE_SORTING_KEY "timestamp, user_id"
+
+FORWARD_QUERY > 
+  SELECT user_id, CAST(game_duration, 'UInt32') AS game_duration, clicks, timestamp, game_id

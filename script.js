@@ -4,8 +4,14 @@ class ClickGame {
         this.circle = document.getElementById('circle');
         this.startScreen = document.getElementById('startScreen');
         this.endScreen = document.getElementById('endScreen');
+        this.usernamePrompt = document.getElementById('usernamePrompt');
+        this.calculatingScreen = document.getElementById('calculatingScreen');
+        this.leaderboardScreen = document.getElementById('leaderboardScreen');
         this.startBtn = document.getElementById('startBtn');
         this.restartBtn = document.getElementById('restartBtn');
+        this.newGameBtn = document.getElementById('newGameBtn');
+        this.usernameSubmit = document.getElementById('usernameSubmit');
+        this.usernameInput = document.getElementById('usernameInput');
         this.timeDisplay = document.getElementById('time');
         this.clicksDisplay = document.getElementById('clicks');
         this.finalTimeDisplay = document.getElementById('finalTime');
@@ -17,9 +23,9 @@ class ClickGame {
         this.isGameActive = false;
         
         // Tinybird configuration
-        this.tinybirdHost = 'https://api.us-east.tinybird.co';
-        this.tinybirdToken = 'p.eyJ1IjogIjM3NDg3MmJmLWU1NzMtNDMwOS05YmJhLTIxMjE3MWViYWQ0OSIsICJpZCI6ICIxMzljZjNmMC0xYWMzLTQ2YTEtYmNiNS1mODdjNGUzZjAwYTMiLCAiaG9zdCI6ICJ1c19lYXN0In0.4SDxPx2Kxec2l0_90Wkn5zdsZz7T6T9m1152VYDX9xo';
-        this.userId = this.getUserId();
+        this.tinybirdHost = 'https://api.us-east.tinybird.co;
+        this.tinybirdToken = 'p.eyJ1IjogIjM3NDg3MmJmLWU1NzMtNDMwOS05YmJhLTIxMjE3MWViYWQ0OSIsICJpZCI6ICJkY2YxNDkyMi1hYmQxLTQxZjUtOWY1Mi1lN2NlNmZjM2ZmZWUiLCAiaG9zdCI6ICJ1c19lYXN0In0.WoBIk29wKgWAiz3WOMlLlHzqf4NZem7JeuuUmuTsGfg;
+        this.username = this.getUsername();
         this.gameId = null;
         
         this.init();
@@ -28,22 +34,46 @@ class ClickGame {
     init() {
         this.startBtn.addEventListener('click', () => this.startGame());
         this.restartBtn.addEventListener('click', () => this.resetGame());
+        this.newGameBtn.addEventListener('click', () => this.resetGame());
+        this.usernameSubmit.addEventListener('click', () => this.submitUsername());
+        this.usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.submitUsername();
+        });
         this.circle.addEventListener('click', () => this.handleCircleClick());
         
         // Prevent context menu on right click
         this.gameArea.addEventListener('contextmenu', (e) => e.preventDefault());
         
-        // Load analytics on init
-        this.loadAnalytics();
+        // Check if username exists, if not show username prompt
+        if (!this.username) {
+            this.showUsernamePrompt();
+        } else {
+            // Load analytics on init
+            this.loadAnalytics();
+        }
     }
     
-    getUserId() {
-        let userId = localStorage.getItem('clickGameUserId');
-        if (!userId) {
-            userId = 'player_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('clickGameUserId', userId);
+    getUsername() {
+        return localStorage.getItem('clickGameUsername');
+    }
+    
+    showUsernamePrompt() {
+        this.startScreen.style.display = 'none';
+        this.usernamePrompt.style.display = 'block';
+        this.usernameInput.focus();
+    }
+    
+    submitUsername() {
+        const username = this.usernameInput.value.trim();
+        if (username && username.length >= 2) {
+            this.username = username;
+            localStorage.setItem('clickGameUsername', username);
+            this.usernamePrompt.style.display = 'none';
+            this.startScreen.style.display = 'block';
+            this.loadAnalytics();
+        } else {
+            alert('Please enter a username with at least 2 characters');
         }
-        return userId;
     }
     
     generateGameId() {
@@ -66,8 +96,8 @@ class ClickGame {
     startTimer() {
         this.gameTimer = setInterval(() => {
             if (this.isGameActive) {
-                const elapsed = (Date.now() - this.startTime) / 1000;
-                this.timeDisplay.textContent = elapsed.toFixed(2);
+                const elapsed = Date.now() - this.startTime;
+                this.timeDisplay.textContent = Math.round(elapsed).toString() + 'ms';
             }
         }, 10);
     }
@@ -108,8 +138,12 @@ class ClickGame {
         this.isGameActive = false;
         clearInterval(this.gameTimer);
         
-        const finalTime = (Date.now() - this.startTime) / 1000;
-        this.finalTimeDisplay.textContent = finalTime.toFixed(2);
+        const finalTime = Date.now() - this.startTime;
+        this.finalTimeDisplay.textContent = Math.round(finalTime).toString() + 'ms';
+        
+        // Hide circle and show calculating screen
+        this.circle.style.display = 'none';
+        this.calculatingScreen.style.display = 'block';
         
         // Send game event to Tinybird
         await this.sendGameEvent(finalTime);
@@ -117,21 +151,24 @@ class ClickGame {
         // Wait 2 seconds to allow events to propagate to Tinybird
         await new Promise(resolve => setTimeout(resolve, 2000));
         
+        // Hide calculating screen and show leaderboard
+        this.calculatingScreen.style.display = 'none';
+        await this.showLeaderboard(finalTime);
+        
         // Reload analytics after game completion
         await this.loadAnalytics();
-        
-        this.circle.style.display = 'none';
-        this.endScreen.style.display = 'block';
     }
     
     resetGame() {
         this.endScreen.style.display = 'none';
+        this.leaderboardScreen.style.display = 'none';
+        this.calculatingScreen.style.display = 'none';
         this.startScreen.style.display = 'block';
         this.circle.style.display = 'none';
         
         this.clicks = 0;
         this.isGameActive = false;
-        this.timeDisplay.textContent = '0.00';
+        this.timeDisplay.textContent = '0ms';
         this.clicksDisplay.textContent = '0';
         
         if (this.gameTimer) {
@@ -139,11 +176,34 @@ class ClickGame {
         }
     }
     
+    async showLeaderboard(finalTime) {
+        try {
+            // Update player's score display
+            document.getElementById('yourScore').textContent = Math.round(finalTime).toString() + 'ms';
+            
+            // Fetch and display leaderboard
+            const leaderboard = await this.fetchLeaderboard();
+            this.updateLeaderboardDisplay(leaderboard, finalTime);
+            
+            this.leaderboardScreen.style.display = 'block';
+        } catch (error) {
+            console.error('Error showing leaderboard:', error);
+            // Fallback to old end screen if leaderboard fails
+            this.endScreen.style.display = 'block';
+        }
+    }
+    
     async sendGameEvent(gameDuration) {
         try {
+            // Ensure we have a valid username before sending
+            if (!this.username) {
+                console.error('Cannot send game event: no username set');
+                return;
+            }
+            
             const eventData = {
-                user_id: this.userId,
-                game_duration: gameDuration,
+                user_id: this.username,
+                game_duration: Math.round(gameDuration),
                 clicks: this.maxClicks,
                 timestamp: new Date().toISOString(),
                 game_id: this.gameId
@@ -182,7 +242,7 @@ class ClickGame {
     }
     
     async fetchAnalytics(endpoint) {
-        const response = await fetch(`${this.tinybirdHost}/v0/pipes/${endpoint}.json?user_id=${this.userId}`, {
+        const response = await fetch(`${this.tinybirdHost}/v0/pipes/${endpoint}.json?username=${this.username}`, {
             headers: {
                 'Authorization': `Bearer ${this.tinybirdToken}`
             }
@@ -196,6 +256,50 @@ class ClickGame {
         return data.data || [];
     }
     
+    async fetchLeaderboard() {
+        const response = await fetch(`${this.tinybirdHost}/v0/pipes/global_leaderboard.json`, {
+            headers: {
+                'Authorization': `Bearer ${this.tinybirdToken}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch leaderboard: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        return data.data || [];
+    }
+    
+    updateLeaderboardDisplay(leaderboard, playerTime) {
+        const leaderboardList = document.getElementById('leaderboardList');
+        const yourRank = document.getElementById('yourRank');
+        
+        if (leaderboard.length === 0) {
+            leaderboardList.innerHTML = '<div class="no-data">No scores yet. Be the first!</div>';
+            yourRank.textContent = '#1';
+            return;
+        }
+        
+        // Find player's rank
+        const playerRank = leaderboard.findIndex(entry => entry.username === this.username) + 1;
+        yourRank.textContent = playerRank > 0 ? `#${playerRank}` : '#-';
+        
+        // Create leaderboard HTML
+        const leaderboardHTML = leaderboard.slice(0, 10).map((entry, index) => {
+            const isCurrentPlayer = entry.username === this.username;
+            return `
+                <div class="leaderboard-entry ${isCurrentPlayer ? 'current-player' : ''}">
+                    <span class="rank">#${index + 1}</span>
+                    <span class="username">${entry.username}</span>
+                    <span class="score">${Math.round(entry.best_time)}ms</span>
+                </div>
+            `;
+        }).join('');
+        
+        leaderboardList.innerHTML = leaderboardHTML;
+    }
+    
     updateAnalyticsDisplay(bestScore, avgScore, totalGames, scoreTrend) {
         // Update analytics elements if they exist
         const bestElement = document.getElementById('bestScore');
@@ -203,11 +307,11 @@ class ClickGame {
         const totalElement = document.getElementById('totalGames');
         
         if (bestElement && bestScore.length > 0) {
-            bestElement.textContent = bestScore[0].best_score?.toFixed(2) || 'N/A';
+            bestElement.textContent = (Math.round(bestScore[0].best_score) || 'N/A') + (bestScore[0].best_score ? 'ms' : '');
         }
         
         if (avgElement && avgScore.length > 0) {
-            avgElement.textContent = avgScore[0].average_score?.toFixed(2) || 'N/A';
+            avgElement.textContent = (Math.round(avgScore[0].average_score) || 'N/A') + (avgScore[0].average_score ? 'ms' : '');
         }
         
         if (totalElement && totalGames.length > 0) {
@@ -243,7 +347,7 @@ class ClickGame {
             
             return `
                 <div class="chart-bar ${isLatest ? 'latest' : ''}" style="height: ${height}%" 
-                     title="Game ${index + 1}: ${point.game_duration.toFixed(2)}s">
+                     title="Game ${index + 1}: ${Math.round(point.game_duration)}ms">
                     <div class="bar-fill"></div>
                 </div>
             `;
