@@ -23,7 +23,7 @@ class ClickGame {
         this.isGameActive = false;
         
         // Tinybird configuration
-        this.tinybirdHost = 'https://api.us-east.tinybird.co;
+        this.tinybirdHost = 'https://api.us-east.tinybird.co';
         this.tinybirdToken = 'p.eyJ1IjogIjM3NDg3MmJmLWU1NzMtNDMwOS05YmJhLTIxMjE3MWViYWQ0OSIsICJpZCI6ICJkY2YxNDkyMi1hYmQxLTQxZjUtOWY1Mi1lN2NlNmZjM2ZmZWUiLCAiaG9zdCI6ICJ1c19lYXN0In0.WoBIk29wKgWAiz3WOMlLlHzqf4NZem7JeuuUmuTsGfg;
         this.username = this.getUsername();
         this.gameId = null;
